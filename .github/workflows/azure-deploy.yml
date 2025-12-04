@@ -52,20 +52,13 @@ jobs:
       with:
         name: python-app
         path: ./app
-
-    # 🔑 Login no Azure — preencha o segredo AZURE_CREDENTIALS
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    # 🚀 Deploy para Azure Web App — ajuste app-name e, se necessário, slot-name/package
+    # 🚀 Deploy para Azure Web App usando Publish Profile
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v3
       with:
         app-name: trabfinalia            # TODO: substitua pelo nome exato do Web App
-        slot-name: production                # TODO: se não usar slot, remova esta linha
-        package: ./app                       # TODO: confirme se o caminho contém seu código pronto para rodar
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+        package: ./app                   # Confirme se o caminho contém seu código pronto para rodar
 
     # (Opcional) Comandos pós-deploy: health check, migrações, etc.
     # - name: Health check
