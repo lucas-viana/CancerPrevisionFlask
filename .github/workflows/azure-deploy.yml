@@ -37,28 +37,20 @@ jobs:
       with:
         python-version: '3.11.9'
         
-    - name: Create Virtual Environment
-      run: |
-        cd backend
-        python -m venv antenv
-        
     - name: Install Dependencies
       run: |
         cd backend
-        source antenv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
-    
-    - name: Configure Azure Python Runtime
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          az webapp config set --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --linux-fx-version "PYTHON|3.11"
-      continue-on-error: true
+        
+    - name: Zip Backend for Deploy
+      run: |
+        cd backend
+        zip -r ../backend.zip . -x "*.git*" -x "*__pycache__*" -x "*.pyc"
     
     - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
+      uses: azure/webapps-deploy@v3
       with:
         app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ./backend
+        package: backend.zip
