@@ -1,0 +1,4 @@
+{
+  "python.pythonPath": "antenv/bin/python",
+  "python.version": "3.11"
+}

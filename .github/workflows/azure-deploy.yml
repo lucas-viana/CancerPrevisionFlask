@@ -35,13 +35,26 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.11.9'
+        
+    - name: Create Virtual Environment
+      run: |
+        cd backend
+        python -m venv antenv
         
     - name: Install Dependencies
       run: |
         cd backend
+        source antenv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
+    
+    - name: Configure Azure Python Runtime
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az webapp config set --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --linux-fx-version "PYTHON|3.11"
+      continue-on-error: true
     
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
